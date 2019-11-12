@@ -59,6 +59,22 @@ func sum(numbers ...int) int {
 	return s
 }
 
+/**
+交换两个变量的值
+交换两个变量的指针法
+*/
+func swapPointer(a, b *int) {
+	*a, *b = *b, *a
+}
+
+/**
+交换两个变量的值
+直接交换值实现
+*/
+func swapVal(a, b int) (int, int) {
+	return b, a
+}
+
 func main() {
 	r, e := eval(13, 4, "++")
 	if e != nil {
@@ -77,5 +93,13 @@ func main() {
 	}, 3, 4))
 
 	fmt.Println(sum(1, 2, 3))
+
+	a, b := 3, 4
+	swapPointer(&a, &b)
+	fmt.Println(a, b)
+
+	c, d := 3, 4
+	c, d = swapVal(c, d)
+	fmt.Println(c, d)
 
 }
