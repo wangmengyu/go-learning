@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -40,5 +41,33 @@ func main() {
 		fmt.Printf("(%d, %c)", i, ch)
 
 	}
+	fmt.Println()
+
+	//string的其他操作都在strings类中
+	fmt.Println(strings.Fields("   foo bar   z    ")) //去掉多余空格，按照空格切片字符串
+	fmt.Println(strings.Split("1,27,387,45,567,644", ","))
+
+	joinStr := []string{"你", "好", "啊"}
+	fmt.Println(strings.Join(joinStr, "+"))
+
+	//Contains 包含
+	containsStr := "是否包含字符串"
+	fmt.Println(strings.Contains(containsStr, "包含"))
+
+	//Index 位置查询
+	indexStr := "寻找索引字符串"
+	fmt.Println(strings.Index(indexStr, "找"))
+
+	//ToLowner
+	toLowerStr := "ABCabc"
+	fmt.Println(strings.ToLower(toLowerStr))
+
+	//ToUpper
+	toUpperStr := "aaaaaaa"
+	fmt.Println(strings.ToUpper(toUpperStr))
+
+	//Trim
+	trimStr := "   xxxx xxx "
+	fmt.Println(strings.Trim(trimStr, " "))
 
 }
