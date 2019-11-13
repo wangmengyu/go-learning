@@ -4,18 +4,18 @@ import "fmt"
 
 //定义struct类型
 type TreeNode struct {
-	value       int       //自身的值
-	left, right *TreeNode //左右treeNode形结构的指针
+	Value       int       //自身的值
+	Left, Right *TreeNode //左右treeNode形结构的指针
 }
 
 //工厂函数,返回局部变量地址，外部可以调用
 func CreateNode(value int) *TreeNode {
-	return &TreeNode{value: value}
+	return &TreeNode{Value: value}
 }
 
 //打印节点的value
 func (node TreeNode) Print() {
-	fmt.Println(node.value)
+	fmt.Println(node.Value)
 }
 
 //设置值，一定要用指针传递，只有传递指针才可以改变结构内容
@@ -25,7 +25,7 @@ func (node *TreeNode) SetValue(val int) {
 		fmt.Println("setting value to nil node, Ignored")
 		return
 	}
-	node.value = val
+	node.Value = val
 }
 
 //遍历结构体，需要传入指针类型
@@ -34,7 +34,7 @@ func (node *TreeNode) Traverse() {
 	if node == nil {
 		return
 	}
-	node.left.Traverse()
+	node.Left.Traverse()
 	node.Print()
-	node.right.Traverse()
+	node.Right.Traverse()
 }
