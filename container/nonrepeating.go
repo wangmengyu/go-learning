@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 //寻找最长不含有重复字符的子串(第一次出现的最大长度)
 /**
@@ -12,30 +15,34 @@ a,b,c,a,b,c,b,b -> abc
     当大于开始位置时候，更新start位置
     如果当前方位位置减去开始位置大于最大长度，则更新最大长度
 */
-func lenNonRepSubStr(s string) (int, string) {
+func lenNonRepSubStr(s string) (int, string, int) {
 
-	lastOccurred := make(map[byte]int) //每个字母最后出现的位置KEY是字母，val是位置
+	lastOccurred := make(map[rune]int) //每个字母最后出现的位置KEY是字母，val是位置
 	start := 0
-	subStr := ""
 	maxLen := 0
-	for i, ch := range []byte(s) {
+	runeSli := []rune(s)
+	subStr := runeSli
+	for i, ch := range runeSli {
+		fmt.Println(reflect.TypeOf(ch), i, string(ch))
 		lastI, ok := lastOccurred[ch]
+
 		if ok && lastI >= start {
 			start = lastI + 1
 		}
 		if i-start+1 > maxLen {
 			maxLen = i - start + 1
-			subStr = s[start : i+1]
-			fmt.Println(subStr)
+			subStr = runeSli[start : i+1]
+			fmt.Println("[sub str]=", string(subStr))
+			fmt.Println(start, i+1)
 		}
 		lastOccurred[ch] = i
 	}
-	return start, subStr
+	return start, string(subStr), maxLen
 
 }
 
 func main() {
-	start, substr := lenNonRepSubStr("abcabcbb")
-	fmt.Println(start, substr)
+	start, substr, maxLen := lenNonRepSubStr("上海自来水来自海上")
+	fmt.Println(start, substr, maxLen)
 
 }
