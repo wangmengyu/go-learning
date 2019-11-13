@@ -116,7 +116,7 @@ func enums() {
 
 }
 func main() {
-	fmt.Println("hello")
+	fmt.Println("hello123")
 	//variableZeroValue()
 	variableInitValue()
 	variableTypeDeduction()
