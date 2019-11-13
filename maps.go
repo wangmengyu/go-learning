@@ -23,9 +23,33 @@ func main() {
 		fmt.Println(k, v)
 	}
 
-	//取得MAP的节点元素值，如果不存在KEY返回空数据
+	//访问MAP的节点元素值，如果不存在KEY返回空数据
 	fmt.Println("Getting values")
 	courseName := m["course"]
 	fmt.Println(courseName)
+	courseName2 := m["courses"] //当取得MAP中不存在的KEY时，会返回空值，不报错
+	fmt.Println(courseName2)
+
+	//判断KEY是否存在
+	courseName3, ok3 := m["course"]
+	fmt.Println(courseName3, ok3)
+	courseName4, ok4 := m["courses"]
+	fmt.Println(courseName4, ok4)
+
+	//通常判断KEY是否存在的写法
+	key := "course"
+	if courseName5, ok5 := m[key]; ok5 {
+		fmt.Println(courseName5)
+	} else {
+		fmt.Printf("key does not exists:%s", key)
+	}
+
+	//删除元素
+	fmt.Println("Delete values")
+	name, nameOk := m["name"]
+	fmt.Println(name, nameOk)
+	delete(m, "name")
+	name, nameOk = m["name"]
+	fmt.Println(name, nameOk)
 
 }
