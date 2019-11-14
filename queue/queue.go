@@ -1,6 +1,6 @@
 package queue
 
-// 整数切片类型的类，名字是Queue
+// 整数切片类型的类，名字是Queue。目的，定义别名
 type Queue []int
 
 //push元素到队列中
