@@ -5,6 +5,7 @@ type Queue []int
 
 //push元素到队列中
 func (q *Queue) Push(v int) {
+	//指针接收者，是可以改变又有的对象的
 	*q = append(*q, v)
 }
 
