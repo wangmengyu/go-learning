@@ -46,6 +46,33 @@ struct func
         func (s *结构体类名) 方法名 {//具体实现} 
      3. 方法的调用
          包名.方法名(结构体变量名)   
+         
+------------
+
+组装方式扩展原有的结构体方法
+创建新的结构体，内部包含一个需要扩展的结构体变量指针
+例如：
+type myTreeNode struct {
+	node *tree.Node
+}
+
+扩展之前的方法：
+/**
+ 扩展了之前遍历方法
+ 左，右，中 顺序遍历树, 后续遍历
+*/
+func (myNode *myTreeNode) postOrder(){
+	if myNode == nil || myNode.node== nil {
+		return
+	}
+	left := myTreeNode{myNode.node.Left}
+	left.postOrder()
+	right := myTreeNode{myNode.node.Right}
+	right.postOrder()
+	myNode.node.Print()
+
+}
+         
 
 
 
