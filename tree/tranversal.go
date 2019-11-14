@@ -1,5 +1,11 @@
 package tree
 
+type Node3 struct {
+	value int
+	Left  *Node3
+	Right *Node3
+}
+
 //遍历结构体，需要传入指针类型
 //先遍历左节点，在打印自己，再遍历右节点
 func (node *Node) Traverse() {
