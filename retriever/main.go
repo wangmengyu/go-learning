@@ -26,7 +26,7 @@ func inspect(r Retriever) {
 	case mock.Retriever:
 		fmt.Println("Contents:", v.Contents)
 	case *real2.Retriever:
-		fmt.Println("UserAgent:", v.UserAgent, "TimeOut:", v.TimeOut)
+		fmt.Println("User-Agent:", v.UserAgent, "TimeOut:", v.TimeOut)
 	default:
 		fmt.Println(reflect.TypeOf(r))
 	}
