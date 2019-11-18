@@ -6,6 +6,17 @@ type Retriever struct {
 	Contents string
 }
 
-func (r Retriever) Get(url string) string {
+/**
+要修改结构体内容 需要指针传入
+*/
+func (r *Retriever) Post(url string, form map[string]string) string {
+	r.Contents = form["contents"]
+	return "ok"
+}
+
+/**
+最好都用指针接受者，因为表示操作同一个对象
+*/
+func (r *Retriever) Get(url string) string {
 	return r.Contents
 }
