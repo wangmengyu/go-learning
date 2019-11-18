@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 /**
@@ -30,7 +32,10 @@ func printFile(filename string) {
 	if err != nil {
 		panic(err)
 	}
-	scaner := bufio.NewScanner(file)
+	printFileContents(file)
+}
+func printFileContents(reader io.Reader) {
+	scaner := bufio.NewScanner(reader)
 	for scaner.Scan() { // 只保留退出条件，连段分号都可以省略，等效于while
 		fmt.Println(scaner.Text())
 	}
@@ -49,7 +54,13 @@ func main() {
 	fmt.Println(convertToBin(5))  // 101
 	fmt.Println(convertToBin(13)) // 13/2 = 6 余下1 6/2 = 3 余0 3/2 = 1 余下 1 , 最后是个1   1101 = 1+4+8
 	//fmt.Println(13 / 2)
-	printFile("abc.txt")
+	printFile("basic/loop/abc.txt")
 	//forever()
+
+	s := `abc
+def
+sss
+123`
+	printFileContents(strings.NewReader(s))
 
 }
