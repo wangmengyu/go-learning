@@ -44,6 +44,12 @@ func main() {
 	fmt.Println("In-order traversal")
 	root.Traverse()      //调用自己的（重载后）的遍历方法
 	root.Node.Traverse() // 调用原有的遍历方法
+	cnt := 0
+	root.TraverseFunc(func(node *tree.Node) {
+		cnt++
+		fmt.Println("TR-FUNC:", node.Value)
+	})
+	fmt.Println("cnt=", cnt)
 	fmt.Println()
 	fmt.Println("post-order traversal")
 	root.postOrder()
