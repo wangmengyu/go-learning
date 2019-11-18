@@ -1,9 +1,20 @@
 package mock
 
+import "fmt"
+
 type Retriever struct {
 	// 这里类的名字最好是Retriever, 不要叫MockRetriever ,因为已经在mock下了，不要重复前缀
 	// 鼠标移动到IDE中 Retriever 类名上 出现小黄灯可以创建实现某个接口
 	Contents string
+}
+
+/**
+实现内置的接口 字符串 toString()
+*/
+func (r *Retriever) String() string {
+
+	fmt.Println("r.C=", r.Contents)
+	return r.Contents
 }
 
 /**

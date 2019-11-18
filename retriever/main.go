@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/wangmengyu/go-learning/retriever/mock"
 	real2 "github.com/wangmengyu/go-learning/retriever/real"
-	"reflect"
 	"time"
 )
 
@@ -57,14 +56,18 @@ func session(s RetrieverPoster) string {
 
 func inspect(r Retriever) {
 	//fmt.Printf("%T %v",r,r)
-	switch v := r.(type) {
-	case *mock.Retriever:
-		fmt.Println("Contents:", v.Contents)
-	case *real2.Retriever:
-		fmt.Println("User-Agent:", v.UserAgent, "TimeOut:", v.TimeOut)
-	default:
-		fmt.Println(reflect.TypeOf(r))
-	}
+	fmt.Println("Inspecting is:", r)
+	/*
+		switch v:= r.(type) {
+		case *mock.Retriever:
+			fmt.Println("Contents:", v.Contents)
+		case *real2.Retriever:
+			fmt.Println("User-Agent:", v.UserAgent, "TimeOut:", v.TimeOut)
+		default:
+			fmt.Println(reflect.TypeOf(r))
+		}
+	*/
+	fmt.Println()
 
 }
 
@@ -74,7 +77,7 @@ func main() {
 
 	retriever := mock.Retriever{Contents: "This is mock"}
 
-	inspect(r)
+	inspect(&retriever)
 
 	r = &real2.Retriever{
 		UserAgent: "Mozilla/5.0",
