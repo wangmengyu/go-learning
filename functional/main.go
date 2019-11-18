@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/wangmengyu/go-learning/functional/fib"
 	"io"
 	"strings"
 )
 
 func main() {
-	a := fib()
+	a := fib.Fibonacci()
 	printFileContents(a)
 
 }
@@ -34,12 +35,4 @@ func (g intGen) Read(p []byte) (n int, err error) {
 	}
 	s := fmt.Sprintf("%d\n", next)
 	return strings.NewReader(s).Read(p) //让S成为下一个序列数。
-}
-
-func fib() intGen {
-	a, b := 0, 1
-	return func() int {
-		a, b = b, a+b
-		return a
-	}
 }
