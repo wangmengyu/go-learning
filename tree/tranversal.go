@@ -26,3 +26,21 @@ func (node *Node) TraverseFunc(f func(*Node)) {
 	node.Right.TraverseFunc(f)
 
 }
+
+/**
+  用channel来遍历树
+  返回一个带有Node指针的channel
+*/
+func (node *Node) TraverseWithChannel() chan *Node {
+	out := make(chan *Node)
+	go func() {
+		node.TraverseFunc(func(node *Node) {
+			out <- node
+
+		})
+		close(out)
+	}()
+
+	return out
+
+}
