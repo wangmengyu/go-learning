@@ -6,9 +6,9 @@ import (
 )
 
 /**
-worker 结构，
-包含两个参数,
-一个用于接收数据的channel，
+worker 结构
+包含两个属性,
+一个用于接收数据的channel
 一个用于完成done通知动作的function
 */
 type worker struct {
@@ -17,28 +17,33 @@ type worker struct {
 }
 
 /**
-创建work
+  初始化worker对象，
+  包含一个用于数据接收的channel,
+  还有一个完成通知的waitGroup指针
 */
 func createWork(i int, wg *sync.WaitGroup) worker {
-	//定义一个channel, 和go func 不断读取channel中的数据
+	//定义一个worker 对象， 里面包含一个channel, 和go func 不断读取channel中的数据
 	w := worker{
 		in: make(chan int),
 		done: func() {
 			wg.Done()
 		},
 	}
+	//开启并发动作
 	go doWork(i, w)
 	return w
 }
 
 func chanDemo() {
 
-	//定义10个元素的协程数组
+	//定义10个元素的 worker类的数组
 	var workers [10]worker
 
+	//一个waitGroup对象，预计等待20个完成
 	var wg sync.WaitGroup
 	wg.Add(20) // 等待20个任务被完成
 
+	//为10个worker元素初始化
 	for i := 0; i < 10; i++ {
 		workers[i] = createWork(i, &wg)
 	}
