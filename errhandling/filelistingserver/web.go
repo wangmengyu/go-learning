@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/wangmengyu/go-learning/errhandling/filelistingserver/filelisting"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 )
 
