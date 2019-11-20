@@ -10,8 +10,6 @@ worker 结构，
 包含两个参数,
 一个用于接收数据的channel，
 一个用于完成done通知动作的function
-
-
 */
 type worker struct {
 	in   chan int
