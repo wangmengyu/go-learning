@@ -34,6 +34,20 @@ func createWork(i int, wg *sync.WaitGroup) worker {
 	return w
 }
 
+/**
+创建work , 接收来自缓冲类channel的数据
+done 参数， 当执行完成后，使用channel通知完成
+*/
+func doWork(id int, w worker) {
+	for n := range w.in {
+		fmt.Printf("work %d, received %c\n", id, n)
+		//需要在开个goroutine， 不会卡住
+		w.done()
+
+	}
+	fmt.Println("no data")
+}
+
 func chanDemo() {
 
 	//定义10个元素的 worker类的数组
@@ -60,20 +74,6 @@ func chanDemo() {
 	//执行等待
 	wg.Wait()
 
-}
-
-/**
-创建work , 接收来自缓冲类channel的数据
-done 参数， 当执行完成后，使用channel通知完成
-*/
-func doWork(id int, w worker) {
-	for n := range w.in {
-		fmt.Printf("work %d, received %c\n", id, n)
-		//需要在开个goroutine， 不会卡住
-		w.done()
-
-	}
-	fmt.Println("no data")
 }
 
 func main() {
