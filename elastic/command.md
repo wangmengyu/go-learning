@@ -65,6 +65,9 @@ request.body 选择text
 
 提交执行
 
+7. 配置类型
+库名/表名/_mapping
+
 
 
 
