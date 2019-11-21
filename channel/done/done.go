@@ -58,21 +58,24 @@ func chanDemo() {
 	wg.Add(20) // 等待20个任务被完成
 
 	//为10个worker元素初始化
-	for i := 0; i < 10; i++ {
+	for i := range workers {
+		fmt.Println("i=", i)
 		workers[i] = createWork(i, &wg)
 	}
 
-	//内置等待工具
+	//发送数据给每个work
 	for i, work := range workers {
 		work.in <- 'a' + i
 	}
 
+	//发送数据给每个work
 	for i, work := range workers {
 		work.in <- 'A' + i
 	}
 
 	//执行等待
 	wg.Wait()
+	fmt.Println("all done")
 
 }
 
