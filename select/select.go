@@ -59,6 +59,7 @@ func main() {
 			//如果切片长度>0, 设置当前激活的work, 并将最早的切片元素进行存储
 			activeWorker = worker
 			activeValue = values[0]
+
 		}
 
 		select {
