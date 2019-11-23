@@ -9,10 +9,6 @@ func main() {
 
 }
 
-func changeVal(a, b int) (int, int) {
-	return b, a
-}
-
 const LEFT = "left"
 const RIGHT = "right"
 
