@@ -36,6 +36,7 @@ func BFSearch(graph map[string][]string, process []string) (string, bool) {
 
 }
 
+//
 func endWithM(s string) bool {
 	lastChar := s[len(s)-1]
 	return string(lastChar) == "m"
