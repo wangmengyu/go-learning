@@ -23,7 +23,7 @@ func main() {
 	for k, _ := range products {
 		table[i] = make([]int, len(weightArr))
 		j := 0
-		for w := range weightArr {
+		for _, w := range weightArr {
 			//last line max val
 			// if has last line
 			lastLineMax := 0
@@ -32,9 +32,11 @@ func main() {
 			} else {
 				lastLineMax = 0
 			}
+			fmt.Println("last line max:", lastLineMax)
 
 			//check if weight is enough
 			curLeftMaxPrice := 0
+			fmt.Println(products[k].weight, w)
 			if (products[k].weight) > w {
 				//no need to get
 				curLeftMaxPrice = 0
@@ -53,6 +55,8 @@ func main() {
 			} else {
 				maxPrice = curLeftMaxPrice
 			}
+
+			fmt.Println("max price:", maxPrice)
 			table[i][j] = maxPrice
 			j++
 		}
