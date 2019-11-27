@@ -53,9 +53,11 @@ func main() {
 			maxPrice := 0
 			//choose the max price from
 			// [
-			//   1. same wight without current product  , cell[i-1][j]
+			//   1. same wight without current product
+			//      cell[i-1][j]
+			//
 			//   2. current product price + the max price of the wight of without current product  ,
-			//   cell[i-1][j-product.weight] + product.price
+			//      cell[i-1][j-product.weight] + product.price
 			// ]
 			//
 			if curLeftMaxPrice < lastLineMax {
