@@ -38,9 +38,10 @@ func main() {
 			curLeftMaxPrice := 0
 			fmt.Println(products[k].weight, w)
 			if (products[k].weight) > w {
-				//no need to get
+				//no need to get current products price
 				curLeftMaxPrice = 0
 			} else {
+				//get current product price + last line max price without the size of current product
 				fmt.Println(k, i, j, w-products[k].weight)
 				lastLineLeftMaxPrice := 0
 				if w-products[k].weight >= 1 {
@@ -50,6 +51,13 @@ func main() {
 			}
 
 			maxPrice := 0
+			//choose the max price from
+			// [
+			//   1. same wight without current product  , cell[i-1][j]
+			//   2. current product price + the max price of the wight of without current product  ,
+			//   cell[i-1][j-product.weight] + product.price
+			// ]
+			//
 			if curLeftMaxPrice < lastLineMax {
 				maxPrice = lastLineMax
 			} else {
