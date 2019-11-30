@@ -10,6 +10,7 @@ func main() {
 
 /**
 插入排序
+时间复杂度和冒泡排序的一样，都为O(n^2)
 */
 func insertSort(queue []int) []int {
 	for i := 0; i < len(queue)-1; i++ {
