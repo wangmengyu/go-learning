@@ -1,64 +1,76 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 /**
-归并排序中，分割序列所花费的时间不算在运行时间内（可以当作序列本来就是分
-割好的）。在合并两个已排好序的子序列时，只需重复比较首位数据的大小，然后移动较
-小的数据，因此只需花费和两个子序列的长度相应的运行时间。也就是说，完成一行归
-并所需的运行时间取决于这一行的数据量。
-看一下上面的图便能得知，无论哪一行都是n 个数据，所以每行的运行时间都为O(n)。
-而将长度为n 的序列对半分割直到只有一个数据为止时，可以分成log2n 行，因此，总
-共有log2n 行。也就是说，总的运行时间为O(nlogn)，这与前面讲到的堆排序相同。
+归并排序 核心操作
+合并 [l,r] 之间的数据，
+例如：
+   []int{4,6,3,7}
+   需要处理[4,6]与[3,7];
+   两个指针分别指向两段数字的开头，逐个比较，将小的放在前面大的放在后面，一组组比较直到结束
 */
-// 合并 [l,r] 两部分数据，mid 左半部分的终点，mid + 1 是右半部分的起点
 func merge(arr []int, l int, mid int, r int) {
-	// 因为需要直接修改 arr 数据，这里首先复制 [l,r] 的数据到新的数组中，用于赋值操作
-	temp := make([]int, r-l+1)
-	for i := l; i <= r; i++ {
-		temp[i-l] = arr[i]
-	}
-
-	// 指向两部分起点
-	left := l
-	right := mid + 1
-
-	for i := l; i <= r; i++ {
-		// 左边的点超过中点，说明只剩右边的数据
-		if left > mid {
-			arr[i] = temp[right-l]
-			right++
-			// 右边的数据超过终点，说明只剩左边的数据
-		} else if right > r {
-			arr[i] = temp[left-l]
-			left++
-			// 左边的数据大于右边的数据，选小的数字
-		} else if temp[left-l] > temp[right-l] {
-			arr[i] = temp[right-l]
-			right++
+	seq1 := arr[l : mid+1]
+	seq2 := arr[mid+1 : r+1]
+	fmt.Println("s1,s2", seq1, seq2)
+	left := 0
+	right := 0
+	point := l
+	//新建临时切片用于存储正确排序的合并序列
+	tmpArr := make([]int, 0)
+	for len(tmpArr) <= r-l {
+		min := 0
+		max := 0
+		if left >= len(seq1) && right >= len(seq2) {
+			//l 越界, r 越界，
+			return
+		} else if right >= len(seq2) && left < len(seq1) {
+			//r 越界，l未越界
+			tmpArr = append(tmpArr, seq1[left])
+		} else if left >= len(seq1) && right < len(seq2) {
+			//l 越界，r未越界
+			tmpArr = append(tmpArr, seq2[right])
 		} else {
-			arr[i] = temp[left-l]
-			left++
+			//r ,l 都不越界 ，进行比较，从小到大追加到临时数组中
+			if seq1[left] > seq2[right] {
+				min = seq2[right]
+				max = seq1[left]
+			} else {
+				min = seq1[left]
+				max = seq2[right]
+			}
+			tmpArr = append(tmpArr, min)
+			tmpArr = append(tmpArr, max)
 		}
+		fmt.Println("min,max=", min, max)
+		point = point + 2
+		left++
+		right++
+	}
+	for i, v := range tmpArr {
+		arr[l+i] = v
 	}
 }
 
+/**
+递归的处理每一段数据，直到，两个指针指向同一个数字
+*/
 func MergeSort(arr []int, l int, r int) {
 	if l >= r {
 		return
 	}
-
-	// 递归向下
-	mid := (r + l) / 2
+	mid := (l + r) / 2
 	MergeSort(arr, l, mid)
 	MergeSort(arr, mid+1, r)
-	// 归并向上
 	merge(arr, l, mid, r)
 }
 
 func main() {
-	arr := []int{2, 1, 4, 7, 6, 3, 5}
+	arr := []int{4, 6, 3, 7, 5, 1, 2}
 	MergeSort(arr, 0, len(arr)-1)
-
 	fmt.Println(arr)
+
 }
