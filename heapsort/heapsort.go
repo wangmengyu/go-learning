@@ -15,6 +15,7 @@ O(n2) 都要短
 func main() {
 	data := []int{1, 2, 4, 7, 3, 6, 11}
 	for i, _ := range data {
+		//对每个节点做堆排序
 		data = heapify(data, i)
 	}
 	seq := make([]int, 0)
@@ -36,7 +37,9 @@ func main() {
 }
 
 /**
-调整最小一颗数，保证第一个节点大于后续两个节点
+对指定根节点做堆排序
+如果其中发生任何的交换操作。
+需要最后将最终得到的根节点继续提交上一层进行比较是否需要再次交换 直到抵达最根部
 */
 func heapify(data []int, parent int) []int {
 	c1 := 2*parent + 1
