@@ -18,6 +18,7 @@ func ChannelClose() {
 	c <- 'b'
 	c <- 'c'
 	c <- 'd'
+	//must sender func to call channel close function
 	close(c)
 	time.Sleep(time.Millisecond)
 }
