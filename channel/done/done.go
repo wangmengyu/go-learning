@@ -10,16 +10,17 @@ func main() {
 }
 
 type worker struct {
-	in chan int
-	wg *sync.WaitGroup
+	in   chan int
+	done func()
 }
 
 func CreateWorker(i int, wg *sync.WaitGroup) worker {
-	w := worker{in: make(chan int), wg: wg}
+	w := worker{in: make(chan int), done: func() {
+		wg.Done()
+	}}
 
-	//create goroutine for the worker
+	//bind goroutine for worker
 	go DoWorker(i, w)
-
 	return w
 
 }
@@ -30,8 +31,9 @@ receive data from channel, and print them
 func DoWorker(i int, w worker) {
 	for {
 		fmt.Printf("worker %d receive %c\n", i, <-w.in)
-		w.wg.Done()
+		w.done()
 	}
+
 }
 
 func chanDemo() {
@@ -41,6 +43,7 @@ func chanDemo() {
 
 	//create ten workers
 	var workers [10]worker
+
 	for i := 0; i < 10; i++ {
 		workers[i] = CreateWorker(i, &wg)
 	}
