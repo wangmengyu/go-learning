@@ -71,6 +71,11 @@ func chanDemo() {
 		channels[i] <- 'a' + i
 	}
 
+	//put ten char into ten channels
+	for i := 0; i < 10; i++ {
+		channels[i] <- 'A' + i
+	}
+
 	time.Sleep(time.Millisecond)
 
 }

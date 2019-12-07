@@ -5,82 +5,56 @@ import (
 	"sync"
 )
 
-/**
-worker 结构
-包含两个属性,
-一个用于接收数据的channel
-一个用于完成done通知动作的function
-*/
+func main() {
+	chanDemo()
+}
+
 type worker struct {
-	in   chan int
-	done func()
+	in chan int
+	wg *sync.WaitGroup
 }
 
-/**
-  初始化worker对象，
-  包含一个用于数据接收的channel,
-  还有一个完成通知的waitGroup指针
-*/
-func createWork(i int, wg *sync.WaitGroup) worker {
-	//定义一个worker 对象， 里面包含一个channel, 和go func 不断读取channel中的数据
-	w := worker{
-		in: make(chan int),
-		done: func() {
-			wg.Done()
-		},
-	}
-	//开启并发动作
-	go doWork(i, w)
+func CreateWorker(i int, wg *sync.WaitGroup) worker {
+	w := worker{in: make(chan int), wg: wg}
+
+	//create goroutine for the worker
+	go DoWorker(i, w)
+
 	return w
+
 }
 
 /**
-创建work , 接收来自缓冲类channel的数据
-done 参数， 当执行完成后，使用channel通知完成
+receive data from channel, and print them
 */
-func doWork(id int, w worker) {
-	for n := range w.in {
-		fmt.Printf("work %d, received %c\n", id, n)
-		//需要在开个goroutine， 不会卡住
-		w.done()
-
+func DoWorker(i int, w worker) {
+	for {
+		fmt.Printf("worker %d receive %c\n", i, <-w.in)
+		w.wg.Done()
 	}
-	fmt.Println("no data")
 }
 
 func chanDemo() {
 
-	//定义10个元素的 worker类的数组
-	var workers [10]worker
-
-	//一个waitGroup对象，预计等待20个完成
+	//create a waitGroup variable
 	var wg sync.WaitGroup
-	wg.Add(20) // 等待20个任务被完成
 
-	//为10个worker元素初始化
-	for i := range workers {
-		fmt.Println("i=", i)
-		workers[i] = createWork(i, &wg)
+	//create ten workers
+	var workers [10]worker
+	for i := 0; i < 10; i++ {
+		workers[i] = CreateWorker(i, &wg)
 	}
-
-	//发送数据给每个work
-	for i, work := range workers {
-		work.in <- 'a' + i
+	//add work number for wg
+	wg.Add(20)
+	//concurrently print a to j
+	for i, worker := range workers {
+		worker.in <- 'a' + i
 	}
-
-	//发送数据给每个work
-	for i, work := range workers {
-		work.in <- 'A' + i
+	//concurrently print A to J
+	for i, worker := range workers {
+		worker.in <- 'A' + i
 	}
-
-	//执行等待
+	//wait for all worker done
 	wg.Wait()
-	fmt.Println("all done")
-
-}
-
-func main() {
-
-	chanDemo()
 
 }
