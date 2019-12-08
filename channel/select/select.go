@@ -54,11 +54,15 @@ func main() {
 	actVal := 0
 	actWorker := make(chan int)
 
+	tm := time.After(100 * time.Second) // after 10 second, tm channel will receive a time value
+	tick := time.Tick(time.Second)      // every second to put time value  into a channel:(a timer)
+
 	for {
 		if len(values) > 0 {
 			actVal = values[0]
 			actWorker = worker
 		}
+		timeOutTm := time.After(800 * time.Millisecond)
 		select {
 		case n = <-c1: //if c1 has val, put number to pending slice
 			values = append(values, n)
@@ -66,6 +70,13 @@ func main() {
 			values = append(values, n)
 		case actWorker <- actVal: //if both c1 and c2 has no data ,get first number from slice and put into worker
 			values = values[1:]
+		case <-timeOutTm: //if wait time over 800 Millisecond, print time out
+			fmt.Println("time out")
+		case <-tick:
+			fmt.Println("len of queue:", len(values))
+		case <-tm:
+			fmt.Println("bye")
+			return
 		}
 	}
 
