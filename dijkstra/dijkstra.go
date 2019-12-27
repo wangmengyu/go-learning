@@ -6,86 +6,92 @@ import (
 )
 
 func main() {
-
-	//存储有向图的三维MAP
-	graph := make(map[string]map[string]float64)
-	graph["start"] = make(map[string]float64)
+	//点到点的距离
+	graph := make(map[string]map[string]int)
+	graph["start"] = make(map[string]int)
 	graph["start"]["a"] = 6
 	graph["start"]["b"] = 2
-	graph["a"] = make(map[string]float64)
+	graph["a"] = make(map[string]int)
 	graph["a"]["fin"] = 1
-	graph["b"] = make(map[string]float64)
+	graph["b"] = make(map[string]int)
 	graph["b"]["a"] = 3
 	graph["b"]["fin"] = 5
+	graph["fin"] = make(map[string]int)
 
-	//存储消耗的二维MAP
-	costs := make(map[string]float64)
+	//消耗表
+	costs := make(map[string]int)
 	costs["a"] = 6
 	costs["b"] = 2
-	costs["fin"] = math.Inf(1)
+	costs["fin"] = math.MaxInt32
 
-	//父节点二位MAP
+	//parent表
 	parent := make(map[string]string)
 	parent["a"] = "start"
 	parent["b"] = "start"
 	parent["fin"] = ""
 
-	//已经处理过的数据
-	var processed = make(map[string]int)
+	//processed表
+	processed := make(map[string]int, 0)
 
-	node := findLowestCostNode(costs, processed)
-	fmt.Println(node)
+	//寻找消耗最低的节点
+	for {
+		node, ok := getMinCost(costs, processed)
+		if ok == false {
+			//没有要处理的节点
+			break
+		}
+		fmt.Println("min cost node:", node)
+		//标记已经处理
+		processed[node] = 1
 
-	for node != "" {
-		//取出当前最小消耗节点的消耗值
-		cost := costs[node]
-		fmt.Println("cost=", cost)
-		//获取相邻节点
-		neighbors := graph[node]
-		for key, v := range neighbors {
-			fmt.Printf("neighbour key=%s,val=%f", key, v)
-			var newCost = cost + v
-			if newCost < costs[key] {
-				costs[key] = newCost
-				parent[key] = node
+		//访问该结点的邻居结点
+		for neighbor, cost := range graph[node] {
+			newCost := cost + costs[node] // 新距离 = 当前节点消耗+当前节点到邻节点的距离
+			if newCost < costs[neighbor] {
+				// 新距离比消耗表的小，需要更新 消耗表和parent表
+				costs[neighbor] = newCost
+				parent[neighbor] = node
 			}
 		}
-		processed[node] = 1
-		node = findLowestCostNode(costs, processed)
 	}
 
-	fmt.Println(costs, parent)
+	fmt.Println("costs", costs)
 
-	//print the all path
-	actKey := "start"
-	var path []map[string]float64
-	for len(parent) > 0 {
-		for k, v := range parent {
-			if v == actKey {
-				p := make(map[string]float64)
-				p[v] = costs[k]
-				path = append(path, p)
-				actKey = k
-				delete(parent, k)
-			}
+	//打印最终路径(parent表),倒过来从，fin开始搜索，每次找它的父节点进行路径记录。直到start点
+
+	next := "fin"
+	path := make([]string, 0)
+	path = append(path, next)
+
+	for {
+		p, ok := parent[next]
+		if ok == false {
+			break
 		}
+		currentPath := []string{p}
+		path = append(currentPath, path[:]...)
+		next = p
 	}
 
 	fmt.Println(path)
-
 }
 
 /**
-找出当前消耗中最小消耗的节点
+  找出当前消耗最低的节点
 */
-func findLowestCostNode(costs map[string]float64, processed map[string]int) string {
-	lowest := math.Inf(1)
-	var lowestKey string
-	for k, v := range costs {
-		if v < lowest && processed[k] != 1 {
-			lowest = v
-			lowestKey = k
+func getMinCost(costs map[string]int, processed map[string]int) (string, bool) {
+	minVal := math.MaxInt32
+	findNode := ""
+	find := false
+	for name, cost := range costs {
+		if _, ok := processed[name]; ok {
+			continue
+		}
+		if cost < minVal {
+			minVal = cost
+			findNode = name
+			find = true
 		}
 	}
-	return lowestKey
+	return findNode, find
 }
