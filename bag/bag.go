@@ -2,77 +2,63 @@ package main
 
 import "fmt"
 
-type weightPrice struct {
-	weight int
-	price  int
-}
-
 func main() {
-	var weightArr = []int{1, 2, 3, 4}
+	//products 商品列表
+	products := []string{"g", "n", "s"}
+	//重量列表
+	weights := make(map[string]int)
+	weights["g"] = 1
+	weights["n"] = 3
+	weights["s"] = 4
 
-	var products = make(map[string]weightPrice)
-	products["g"] = weightPrice{price: 1500, weight: 1}
-	products["m"] = weightPrice{price: 3000, weight: 4}
-	products["n"] = weightPrice{price: 2000, weight: 3}
+	//价格列表
+	prices := make(map[string]int)
+	prices["g"] = 1500
+	prices["n"] = 2000
+	prices["s"] = 3000
 
-	//start to cal highest price for each cell
-	//save every cell values
-	table := make([][]int, len(products))
+	maxWeight := 4 // 最大负重
+	cells := make([][]int, len(products))
 
-	i := 0
-	for k, _ := range products {
-		table[i] = make([]int, len(weightArr))
-		j := 0
-		for _, w := range weightArr {
-			//last line max val
-			// if has last line
-			lastLineMax := 0
-			if i > 0 {
-				lastLineMax = table[i-1][j]
-			} else {
-				lastLineMax = 0
+	includeProduct := make(map[string]int, 0) //需要盗取的商品列表
+
+	for i, product := range products {
+		cells[i] = make([]int, maxWeight)
+		for j := 0; j < maxWeight; j++ {
+			//上一个单元格的值(cells[i-1]j)
+			excludePrice := 0
+			if i-1 >= 0 {
+				excludePrice = cells[i-1][j]
 			}
-			fmt.Println("last line max:", lastLineMax)
-
-			//check if weight is enough
-			curLeftMaxPrice := 0
-			fmt.Println(products[k].weight, w)
-			if (products[k].weight) > w {
-				//no need to get current products price
-				curLeftMaxPrice = 0
-			} else {
-				//get current product price + last line max price without the size of current product
-				fmt.Println(k, i, j, w-products[k].weight)
-				lastLineLeftMaxPrice := 0
-				if w-products[k].weight >= 1 {
-					lastLineLeftMaxPrice = table[i][w-products[k].weight]
-				}
-				curLeftMaxPrice = products[k].price + lastLineLeftMaxPrice
+			//当前商品价格+剩余空间价值
+			includePrice := 0
+			leftPrice := 0
+			if i-1 >= 0 && j-weights[product] >= 0 {
+				leftPrice = cells[i-1][j-weights[product]]
 			}
+			includePrice = prices[product] + leftPrice
 
-			maxPrice := 0
-			//choose the max price from
-			// [
-			//   1. same wight without current product
-			//      cell[i-1][j]
-			//
-			//   2. current product price + the max price of the wight of without current product  ,
-			//      cell[i-1][j-product.weight] + product.price
-			// ]
-			//
-			if curLeftMaxPrice < lastLineMax {
-				maxPrice = lastLineMax
+			if includePrice > excludePrice {
+				//需要包含当前物品
+				cells[i][j] = includePrice
+				includeProduct[product] = 1
 			} else {
-				maxPrice = curLeftMaxPrice
+				//不需要包含当前物品
+				cells[i][j] = excludePrice
+				delete(includeProduct, product)
 			}
 
-			fmt.Println("max price:", maxPrice)
-			table[i][j] = maxPrice
-			j++
 		}
-		i++
 	}
 
-	fmt.Println(table)
+	maxVal := cells[len(products)-1][maxWeight-1]
+	fmt.Println("max value =", maxVal)
+
+	fmt.Println("need follow product list:")
+	i := 1
+	for product, _ := range includeProduct {
+		fmt.Printf("%d.%s $%d ￡%d\n", i, product, prices[product], weights[product])
+		i++
+	}
 
 }
