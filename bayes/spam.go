@@ -12,13 +12,13 @@ type Subject struct {
 
 /**
 以下主题给出了是否是垃圾邮件：
-reset your password 0
-you have won 1 million dollars 1
-send me your password 1
-peach prince sends you 10 million dollars 1
-happy birthday 0
+	reset your password 0
+	you have won 1 million dollars 1
+	send me your password 1
+	peach prince sends you 10 million dollars 1
+	happy birthday 0
 判断
-collect your million dollars now 是垃圾邮件的概率是多少
+	collect your million dollars now 是垃圾邮件的概率是多少
 */
 
 func main() {
