@@ -7,7 +7,7 @@ import (
 )
 
 /**
-原子化的int
+  原子化
 */
 type atomicInt struct {
 	value int
