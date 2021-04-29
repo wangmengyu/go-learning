@@ -78,6 +78,10 @@ func (c *Client) ReadPump() {
 }
 
 // WritePump 从中心区域抽取数据放到连接的websocket通道内
+// 一个 gouroutine 运行 WritePump 为每一个连接, 这个应用 通过执行所有的写操作从gouroutine, 每个连接至少一个write
+// A goroutine running writePump is started for each connection. The
+// application ensures that there is at most one writer to a connection by
+// executing all writes from this goroutine.
 func (c *Client) WritePump() {
 	//定时请求器
 	ticker := time.NewTicker(pingPeriod)
@@ -86,7 +90,5 @@ func (c *Client) WritePump() {
 		ticker.Stop()
 		_ = c.Conn.Close()
 	}()
-
-	//
 
 }
