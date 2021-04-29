@@ -1,7 +1,9 @@
 package socket
 
 import (
+	"bytes"
 	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
 	"time"
 )
@@ -45,6 +47,43 @@ func (c *Client) ReadPump() {
 	//预定注销客户端, 关闭连接
 	defer func() {
 		c.Hub.Unregister <- c
+		_ = c.Conn.Close()
+	}()
+
+	//设置最大消息数量
+	c.Conn.SetReadLimit(maxMessageSize)
+	//设置最长等待时间
+	_ = c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+
+	//设置收到信息之后的操作. 延长等待市场
+	c.Conn.SetPongHandler(func(appData string) error {
+		_ = c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+
+	//不断接收数据
+	for {
+		_, message, err := c.Conn.ReadMessage()
+		if err != nil {
+			//遇到错误, 关闭响应通道
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+			break
+		}
+		//去掉空格后把消息推送到广播通道里
+		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		c.Hub.Broadcast <- message
+	}
+}
+
+// WritePump 从中心区域抽取数据放到连接的websocket通道内
+func (c *Client) WritePump() {
+	//定时请求器
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		//关闭掉ticker, 关闭掉连接
+		ticker.Stop()
 		_ = c.Conn.Close()
 	}()
 
