@@ -2,6 +2,8 @@ package socket
 
 import (
 	"bytes"
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -77,18 +79,78 @@ func (c *Client) ReadPump() {
 	}
 }
 
-// WritePump 从中心区域抽取数据放到连接的websocket通道内
-// 一个 gouroutine 运行 WritePump 为每一个连接, 这个应用 通过执行所有的写操作从gouroutine, 每个连接至少一个write
+// WritePump 从中心区域抽取数据放到连接的websocket通道内 , 每个conn最多一个写goroutine. 控制这个conn所有的写操作
 // A goroutine running writePump is started for each connection. The
 // application ensures that there is at most one writer to a connection by
 // executing all writes from this goroutine.
 func (c *Client) WritePump() {
-	//定时请求器
+	//定时请求器连接
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		//关闭掉ticker, 关闭掉连接
 		ticker.Stop()
 		_ = c.Conn.Close()
 	}()
+
+	//不断
+	for {
+		select {
+		case message, ok := <-c.Send: //从Send通道获取消息,
+			_ = c.Conn.SetWriteDeadline(time.Now().Add(writeWait)) //设置写入等待秒数.
+			if !ok {
+				// 关闭channel
+				_ = c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			w, err := c.Conn.NextWriter(websocket.TextMessage) // 获取writer
+			if err != nil {
+				return
+			}
+
+			//写入第一条消息
+			_, _ = w.Write(message)
+
+			//把现在Send通道里里有的消息全部排队输入到writer中
+			n := len(c.Send)
+			for i := 1; i <= n; n++ {
+				_, _ = w.Write(newline)
+				_, _ = w.Write(<-c.Send)
+			}
+
+			//关闭通道
+			if err := c.Conn.Close(); err != nil {
+				return
+			}
+		case <-ticker.C: // 心跳, 每次延长写入等待时间
+			_ = c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				//输入ping信息
+				return
+			}
+		}
+	}
+
+}
+
+func ServeWs(c *gin.Context) {
+	w := c.Writer
+	r := c.Request
+	conn, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil {
+		fmt.Println("[err]", err.Error())
+	}
+	hub := NewHub()
+	// 注册一个客户端
+	client := &Client{
+		Hub:  hub,
+		Conn: conn,
+		Send: make(chan []byte, 256),
+	}
+
+	client.Hub.Register <- client
+	go client.WritePump()
+	go client.ReadPump()
 
 }
