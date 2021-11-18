@@ -4,9 +4,10 @@ import "fmt"
 
 // main 排列组合: 全排列就是第一个数字起每个数字分别与它后面的数字交换。
 func main() {
-	items := []int{1, 2, 3, 4, 5}
+	items := []int{1, 2, 3, 4, 5, 6, 7}
+	num := 3
 	resList := make([][]int, 0) // 收集全排列结果的二维数组
-	AllRange(items, 0, len(items), &resList)
+	AllRange(items, 0, num, &resList)
 	fmt.Println(len(resList)) //
 	fmt.Println(items)
 }
